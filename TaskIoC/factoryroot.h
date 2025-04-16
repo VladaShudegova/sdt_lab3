@@ -2,10 +2,11 @@
 #define FACTORYROOT_H
 
 
+
 class FactoryRoot
 {
 public:
-    FactoryRoot();
+    virtual ~FactoryRoot() {}
 };
 
 #endif // FACTORYROOT_H

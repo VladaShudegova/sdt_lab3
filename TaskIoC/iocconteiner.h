@@ -38,12 +38,12 @@ public:
 
     std::map<int, std::shared_ptr<FactoryRoot>> m_factories;
 
-
+    //Вся конструкция нужна для того, чтобы по типу T найти соответствующую фабрику, привести её к правильному типу и получить новый объект этого типа.
     template<typename T>
     std::shared_ptr<T> GetObject() {
         auto typeId = GetTypeID<T>();
         auto factoryBase = m_factories[typeId];
-        auto factory = std::static_pointer_cast<CFactory<T>>(factoryBase);
+        auto factory = std::static_pointer_cast<CFactory<T>>(factoryBase); //Приведение умного указателя на базовый класс (FactoryRoot) к указателю на нужный шаблонный класс-фабрику (CFactory<T>).
         return factory->GetObject();
     }
 

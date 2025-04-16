@@ -8,4 +8,7 @@ public:
     IntelProcessor();
 };
 
+
+
+
 #endif // INTELPROCESSOR_H
