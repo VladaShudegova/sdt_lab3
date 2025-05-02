@@ -1,11 +1,13 @@
 #ifndef CFACTORY_H
 #define CFACTORY_H
-#include "factoryroot.h"
+
 #include <functional>
 #include <memory>
 #include <iostream>
 #include <map>
 #include <string>
+#include "factoryroot.h"
+
 
 //Получить экземпляр объекта
 template<typename T>
@@ -22,7 +24,7 @@ public:
     {
     }
 
-    std::shared_ptr<T> GetObject() {
+    std::shared_ptr<T> getObject() {
         return m_functor();
     }
 };

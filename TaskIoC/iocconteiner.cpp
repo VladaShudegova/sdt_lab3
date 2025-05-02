@@ -1,6 +1,4 @@
 #include "iocconteiner.h"
 
-IOCConteiner::IOCConteiner()
-{
-
-}
+// инициализируем ненулевым числом
+int IOCContainer::s_nextTypeId = 115094801;
