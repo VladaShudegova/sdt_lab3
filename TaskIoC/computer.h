@@ -28,6 +28,7 @@ public:
     void getComputer() const override
     {
         std::cout << m_superInfo<< ":\n";
+        std::cout << "1.";
         m_processor->getProcessorInfo();
     }
 };

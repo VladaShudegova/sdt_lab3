@@ -79,58 +79,73 @@ public:
 
 
 
-IOCContainer gContainer;
+IOCContainer gConteiner;
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    IOCContainer conteiner;
-
-
-
-
     //------Example #1----------------
     //Injector injector;
-    IOCContainer injector;
-
-
-
+    IOCContainer conteiner;
 
     // Регистрируем IHello с классом Hello, т.о. каждый раз запрашивая IHell получаем объект Hello.
-    injector.registerInstance<IHello, Hello>();
-    auto helloInstance = injector.getObject<IHello>();
-    helloInstance->hello();
-    injector.registerInstance<IHello, Privet>();
+    // injector.registerInstance<IHello, Hello>();
+    // auto helloInstance = injector.getObject<IHello>();
+    // helloInstance->hello();
+    // injector.registerInstance<IHello, Privet>();
 
-    //Здесь, после регистрации получим объект Privet
-    helloInstance = injector.getObject<IHello>();
-    helloInstance->hello();
+    // //Здесь, после регистрации получим объект Privet
+    // helloInstance = injector.getObject<IHello>();
+    // helloInstance->hello();
 
-    //------Example #2----------------
+    // //------Example #2----------------
 
-    gContainer.registerInstance<IAmAThing, TheThing>();
-    gContainer.registerFactory<IAmTheOtherThing, TheOtherThing, IAmAThing>();
+    // gContainer.registerInstance<IAmAThing, TheThing>();
+    // gContainer.registerFactory<IAmTheOtherThing, TheOtherThing, IAmAThing>();
 
-    gContainer.getObject<IAmAThing>()->TestThis();
-    gContainer.getObject<IAmTheOtherThing>()->TheOtherTest();
+    // gContainer.getObject<IAmAThing>()->TestThis();
+    // gContainer.getObject<IAmTheOtherThing>()->TheOtherTest();
 
-    //Опять запршиваем объект,после последней регистрации получим объект Privet
-    helloInstance = injector.getObject<IHello>();
-    helloInstance->hello();
+    // //Опять запршиваем объект,после последней регистрации получим объект Privet
+    // helloInstance = injector.getObject<IHello>();
+    // helloInstance->hello();
 
+    // conteiner.registerFunctor<IProcessor>(std::function(
+    //     []() -> std::shared_ptr<IProcessor>{
+    //         return std::make_shared<IntelProcessor>("i7-12700K", ProcessorType::x86, 3.6);
+    //     })
+    //                                       );
+
+    conteiner.registerInstance<IProcessor, IntelProcessor>();
     conteiner.registerFunctor<IProcessor>(std::function(
         []() -> std::shared_ptr<IProcessor>{
             return std::make_shared<IntelProcessor>("i7-12700K", ProcessorType::x86, 3.6);
         })
                                           );
+    auto processorInstance = conteiner.getObject<IProcessor>();
+    processorInstance->getProcessorInfo();
 
-    conteiner.registerInstance<IProcessor, IntelProcessor>();
+
+    conteiner.registerInstance<IProcessor, AMDProcessor>();
+    conteiner.registerFunctor<IProcessor>(std::function(
+        []() -> std::shared_ptr<IProcessor>{
+            return std::make_shared<AMDProcessor>("A6-9500E OEM", ProcessorType::x64, 3.0);
+        })
+                                          );
+    processorInstance = conteiner.getObject<IProcessor>();
+    processorInstance->getProcessorInfo();
+
+    std::cout<< "\n";
     conteiner.registerFactory<IComputer, Computer, IProcessor>();
 
-   // cout << "Computer on IntelProcessor base";
-
     conteiner.getObject<IProcessor>()->getProcessorInfo();
+    std::cout<< "\n";
     conteiner.getObject<IComputer>()->getComputer();
+
+
+
+
+
     return a.exec();
 }
