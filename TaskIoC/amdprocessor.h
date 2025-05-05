@@ -12,9 +12,7 @@ private:
 
 public:
 
-    AMDProcessor(){
-        AMDProcessor("A6-9500E OEM", ProcessorType::x86, 3.0);
-    }
+    AMDProcessor(): AMDProcessor("A6-9500E OEM", ProcessorType::x86, 3.0){}
 
     AMDProcessor(string version, ProcessorType type, double speed):
         m_version(version), m_type(type), m_speed(speed){}

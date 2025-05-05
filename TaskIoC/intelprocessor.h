@@ -11,9 +11,8 @@ private:
     double m_speed;
 
 public:
-    IntelProcessor(){
-        IntelProcessor("i7-12700K", ProcessorType::x86, 3.6);
-    }
+    IntelProcessor(): IntelProcessor("i7-12700K", ProcessorType::x64, 3.6){}
+
 IntelProcessor(string version, ProcessorType type, double speed):
         m_version(version), m_type(type), m_speed(speed){}
 

@@ -15,12 +15,7 @@ private:
 
 public:
 
-    Computer(shared_ptr<IProcessor> processor)
-        : m_processor(processor){
-        m_superInfo = "Computer has ";
-    }
-
-        Computer(shared_ptr<IProcessor> processor, string sInfo)
+        Computer(shared_ptr<IProcessor> processor, string sInfo = "Computer has ")
         : m_processor(processor)
         , m_superInfo(sInfo){}
 
