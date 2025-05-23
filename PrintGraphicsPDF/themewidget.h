@@ -7,6 +7,7 @@
 QT_BEGIN_NAMESPACE
     class QComboBox;
     class QCheckBox;
+    class QPushButton;
 QT_END_NAMESPACE
 
 QT_CHARTS_BEGIN_NAMESPACE
@@ -37,6 +38,7 @@ public:
 
 private Q_SLOTS:
     void updateUI();
+    void printPDF();
 
 private:
     DataTable generateRandomData(int listCount, int valueMax, int valueCount) const;
@@ -61,8 +63,7 @@ private:
     DataTable m_dataTable;
     QComboBox *m_themeComboBox;
     QCheckBox *m_antialiasCheckBox;
-    QComboBox *m_animatedComboBox;
-    QComboBox *m_legendComboBox;
+    QPushButton *m_printButton;
 };
 
 #endif // THEMEWIDGET_H

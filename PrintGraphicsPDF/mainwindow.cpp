@@ -52,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     //Устанавливаем размер главного окна
     this->setGeometry(100, 100, 1500, 500);
     this->setStatusBar(new QStatusBar(this));
-    this->statusBar()->showMessage("Choosen Path: ");
+    this->statusBar()->showMessage("Выберите файл БД ");
 
     QLabel *justTmpLabel = new QLabel(this);
     justTmpLabel->setText("------В этой части будем отображать файлы с данными для графика----");

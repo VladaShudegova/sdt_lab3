@@ -14,14 +14,21 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLabel>
 #include <QtCore/QTime>
 #include <QtCharts/QBarCategoryAxis>
+#include <QDebug>
 #include "themewidget.h"
 
+enum ChartType {
+    ChartTypeUndefined = 0,
+    ChartTypeBar,
+    ChartTypePie
+};
 
 
 ThemeWidget::ThemeWidget(QWidget *parent) :
@@ -31,22 +38,18 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     m_valueCount(7),
     m_dataTable(generateRandomData(m_listCount, m_valueMax, m_valueCount)),
     m_themeComboBox(createThemeBox()),
-    m_antialiasCheckBox(new QCheckBox("Anti-aliasing")),
-    m_animatedComboBox(createAnimationBox()),
-    m_legendComboBox(createLegendBox())
+    m_antialiasCheckBox(new QCheckBox("Черно-белый график")),
+    m_printButton(new QPushButton("Печать графика", this))
 {
     connectSignals();
     // create layout
     QGridLayout *baseLayout = new QGridLayout();
     QHBoxLayout *settingsLayout = new QHBoxLayout();
-    settingsLayout->addWidget(new QLabel("Theme:"));
+    settingsLayout->addWidget(new QLabel("Выберите тип диаграммы:"));
     settingsLayout->addWidget(m_themeComboBox);
-    settingsLayout->addWidget(new QLabel("Animation:"));
-    settingsLayout->addWidget(m_animatedComboBox);
-    settingsLayout->addWidget(new QLabel("Legend:"));
-    settingsLayout->addWidget(m_legendComboBox);
     settingsLayout->addWidget(m_antialiasCheckBox);
-    //settingsLayout->addStretch();
+    settingsLayout->addWidget(m_printButton);
+    settingsLayout->addStretch();
     baseLayout->addLayout(settingsLayout, 0, 0);
 
     //create charts
@@ -60,6 +63,15 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     setLayout(baseLayout);
 
     m_antialiasCheckBox->setChecked(true);
+
+
+    // pal.setColor(QPalette::Window, QRgb(0xf0f0f0));
+    // pal.setColor(QPalette::WindowText, QRgb(0x404044));
+    QPalette pal = window()->palette();
+    pal.setColor(QPalette::Window, Qt::white);
+    pal.setColor(QPalette::WindowText, Qt::black);
+    window()->setPalette(pal);
+
     updateUI();
 }
 
@@ -73,13 +85,10 @@ void ThemeWidget::connectSignals()
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &ThemeWidget::updateUI);
     connect(m_antialiasCheckBox, &QCheckBox::toggled, this, &ThemeWidget::updateUI);
-    connect(m_animatedComboBox,
-            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            this, &ThemeWidget::updateUI);
-    connect(m_legendComboBox,
-            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            this, &ThemeWidget::updateUI);
+    connect(m_printButton, &QPushButton::clicked, this,  &ThemeWidget::printPDF);
 }
+
+
 
 DataTable ThemeWidget::generateRandomData(int listCount, int valueMax, int valueCount) const
 {
@@ -109,15 +118,14 @@ QComboBox *ThemeWidget::createThemeBox() const
 {
     // settings layout
     QComboBox *themeComboBox = new QComboBox();
-    themeComboBox->addItem("Light", QChart::ChartThemeLight);
-    themeComboBox->addItem("Blue Cerulean", QChart::ChartThemeBlueCerulean);
-    themeComboBox->addItem("Dark", QChart::ChartThemeDark);
-    themeComboBox->addItem("Brown Sand", QChart::ChartThemeBrownSand);
-    themeComboBox->addItem("Blue NCS", QChart::ChartThemeBlueNcs);
-    themeComboBox->addItem("High Contrast", QChart::ChartThemeHighContrast);
-    themeComboBox->addItem("Blue Icy", QChart::ChartThemeBlueIcy);
-    themeComboBox->addItem("Qt", QChart::ChartThemeQt);
+    themeComboBox->addItem("BarChart", ChartType::ChartTypeBar);
+    themeComboBox->addItem("PieChart", ChartType::ChartTypePie);
+
     return themeComboBox;
+}
+
+void ThemeWidget::printPDF(){
+    qDebug() << "PDF готов!";
 }
 
 QComboBox *ThemeWidget::createAnimationBox() const
@@ -280,8 +288,10 @@ void ThemeWidget::updateUI()
     QChart::ChartTheme theme = static_cast<QChart::ChartTheme>(
         m_themeComboBox->itemData(m_themeComboBox->currentIndex()).toInt());
 
+
     const auto chart = m_chart;
-    if (m_chart->chart()->theme() != theme) {
+
+     /*if (m_chart->chart()->theme() != theme) {
         chart->chart()->setTheme(theme);
 
         QPalette pal = window()->palette();
@@ -312,23 +322,9 @@ void ThemeWidget::updateUI()
         }
         window()->setPalette(pal);
     }
-
+    */
     bool checked = m_antialiasCheckBox->isChecked();
     chart->setRenderHint(QPainter::Antialiasing, checked);
 
-    QChart::AnimationOptions options(
-        m_animatedComboBox->itemData(m_animatedComboBox->currentIndex()).toInt());
-    if (m_chart->chart()->animationOptions() != options) {
-        chart->chart()->setAnimationOptions(options);
-    }
-
-    Qt::Alignment alignment(m_legendComboBox->itemData(m_legendComboBox->currentIndex()).toInt());
-
-    if (!alignment) {
-      chart->chart()->legend()->hide();
-    } else {
-        chart->chart()->legend()->setAlignment(alignment);
-        chart->chart()->legend()->show();
-    }
 }
 
