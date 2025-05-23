@@ -13,13 +13,13 @@ QT_END_NAMESPACE
 
 
 QT_BEGIN_NAMESPACE
-class QComboBox;
-class QCheckBox;
+    class QComboBox;
+    class QCheckBox;
 QT_END_NAMESPACE
 
 QT_CHARTS_BEGIN_NAMESPACE
     class QChartView;
-class QChart;
+    class QChart;
 QT_CHARTS_END_NAMESPACE
 
 
