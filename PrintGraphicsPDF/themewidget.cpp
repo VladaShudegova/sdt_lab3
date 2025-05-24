@@ -22,6 +22,11 @@
 #include <QtCore/QTime>
 #include <QtCharts/QBarCategoryAxis>
 #include <QDebug>
+
+
+
+
+
 #include "themewidget.h"
 
 enum ChartType {
@@ -43,36 +48,35 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
 {
     connectSignals();
     // create layout
-    QGridLayout *baseLayout = new QGridLayout();
+    m_baseLayout = new QGridLayout();
     QHBoxLayout *settingsLayout = new QHBoxLayout();
     settingsLayout->addWidget(new QLabel("Выберите тип диаграммы:"));
     settingsLayout->addWidget(m_themeComboBox);
     settingsLayout->addWidget(m_antialiasCheckBox);
     settingsLayout->addWidget(m_printButton);
     settingsLayout->addStretch();
-    baseLayout->addLayout(settingsLayout, 0, 0);
+    m_baseLayout->addLayout(settingsLayout, 0, 0);
 
     //create charts
 
     QChartView *chartView;
 
     chartView = new QChartView(createBarChart(m_valueCount));
-    baseLayout->addWidget(chartView, 1, 0);
+    m_baseLayout->addWidget(chartView, 1, 0);
     m_chart = chartView;
 
-    setLayout(baseLayout);
+    setLayout(m_baseLayout);
 
-    m_antialiasCheckBox->setChecked(true);
+    m_antialiasCheckBox->setChecked(false);
 
+    m_chart->chart()->setTheme(QChart::ChartThemeLight);
 
-    // pal.setColor(QPalette::Window, QRgb(0xf0f0f0));
-    // pal.setColor(QPalette::WindowText, QRgb(0x404044));
-    QPalette pal = window()->palette();
-    pal.setColor(QPalette::Window, Qt::white);
-    pal.setColor(QPalette::WindowText, Qt::black);
-    window()->setPalette(pal);
+    qgce = new QGraphicsColorizeEffect(this);
+    qgce->setColor(Qt::black);
+    qgce->setEnabled(false);
+    m_chart->chart()->setGraphicsEffect(qgce);
 
-    updateUI();
+    //updateUI(0);
 }
 
 ThemeWidget::~ThemeWidget()
@@ -83,8 +87,8 @@ void ThemeWidget::connectSignals()
 {
     connect(m_themeComboBox,
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            this, &ThemeWidget::updateUI);
-    connect(m_antialiasCheckBox, &QCheckBox::toggled, this, &ThemeWidget::updateUI);
+            this, &ThemeWidget::changeChart);
+    connect(m_antialiasCheckBox, &QCheckBox::stateChanged, this, &ThemeWidget::updateUI);
     connect(m_printButton, &QPushButton::clicked, this,  &ThemeWidget::printPDF);
 }
 
@@ -283,48 +287,44 @@ QChart *ThemeWidget::createScatterChart() const
     return chart;
 }
 
-void ThemeWidget::updateUI()
-{
-    QChart::ChartTheme theme = static_cast<QChart::ChartTheme>(
+void ThemeWidget::changeChart(){
+    QLayoutItem *item = m_baseLayout->itemAtPosition(1, 0);
+    if (!item) return; // на всякий случай, если вдруг нет виджета
+
+    QChartView *oldChartView = qobject_cast<QChartView*>(item->widget());
+    if (!oldChartView) return;
+
+    QChart::ChartType typeChart = static_cast<QChart::ChartType>(
         m_themeComboBox->itemData(m_themeComboBox->currentIndex()).toInt());
 
 
-    const auto chart = m_chart;
-
-     /*if (m_chart->chart()->theme() != theme) {
-        chart->chart()->setTheme(theme);
-
-        QPalette pal = window()->palette();
-        if (theme == QChart::ChartThemeLight) {
-            pal.setColor(QPalette::Window, QRgb(0xf0f0f0));
-            pal.setColor(QPalette::WindowText, QRgb(0x404044));
-        } else if (theme == QChart::ChartThemeDark) {
-            pal.setColor(QPalette::Window, QRgb(0x121218));
-            pal.setColor(QPalette::WindowText, QRgb(0xd6d6d6));
-        } else if (theme == QChart::ChartThemeBlueCerulean) {
-            pal.setColor(QPalette::Window, QRgb(0x40434a));
-            pal.setColor(QPalette::WindowText, QRgb(0xd6d6d6));
-        } else if (theme == QChart::ChartThemeBrownSand) {
-            pal.setColor(QPalette::Window, QRgb(0x9e8965));
-            pal.setColor(QPalette::WindowText, QRgb(0x404044));
-        } else if (theme == QChart::ChartThemeBlueNcs) {
-            pal.setColor(QPalette::Window, QRgb(0x018bba));
-            pal.setColor(QPalette::WindowText, QRgb(0x404044));
-        } else if (theme == QChart::ChartThemeHighContrast) {
-            pal.setColor(QPalette::Window, QRgb(0xffab03));
-            pal.setColor(QPalette::WindowText, QRgb(0x181818));
-        } else if (theme == QChart::ChartThemeBlueIcy) {
-            pal.setColor(QPalette::Window, QRgb(0xcee7f0));
-            pal.setColor(QPalette::WindowText, QRgb(0x404044));
-        } else {
-            pal.setColor(QPalette::Window, QRgb(0xf0f0f0));
-            pal.setColor(QPalette::WindowText, QRgb(0x404044));
-        }
-        window()->setPalette(pal);
+    if(typeChart == ChartType::ChartTypeBar){
+        m_baseLayout->removeWidget(oldChartView);
+        oldChartView->deleteLater();
+        QChartView *chartView = new QChartView(createBarChart(m_valueCount));
+        m_baseLayout->addWidget(chartView, 1, 0);
+        m_chart = chartView;
+        m_chart->chart()->setGraphicsEffect(qgce);
     }
-    */
-    bool checked = m_antialiasCheckBox->isChecked();
-    chart->setRenderHint(QPainter::Antialiasing, checked);
-
+    else if(typeChart == ChartType::ChartTypePie){
+        m_baseLayout->removeWidget(oldChartView);
+        oldChartView->deleteLater();
+        QChartView *chartView = new QChartView(createPieChart());
+        chartView->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+        m_baseLayout->addWidget(chartView, 1, 0);
+        m_chart = chartView;
+        m_chart->chart()->setGraphicsEffect(qgce);
+    }
 }
+
+void ThemeWidget::updateUI(int state)
+{
+    if (qgce){
+        qgce->setEnabled(Qt::Checked == state);
+    }
+}
+
+
+
+
 

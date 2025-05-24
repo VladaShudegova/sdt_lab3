@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+
     themeWidget = new ThemeWidget();
 
 
@@ -62,6 +63,7 @@ MainWindow::MainWindow(QWidget *parent)
     splitter->addWidget(justTmpLabel);
     splitter->addWidget(themeWidget);
     setCentralWidget(splitter);
+
 
 }
 

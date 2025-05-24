@@ -3,11 +3,15 @@
 
 #include <QtWidgets/QWidget>
 #include <QtCharts/QChartGlobal>
+#include <QGraphicsColorizeEffect>
+#include <QColorDialog>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
     class QComboBox;
     class QCheckBox;
     class QPushButton;
+    class QGridLayout;
 QT_END_NAMESPACE
 
 QT_CHARTS_BEGIN_NAMESPACE
@@ -37,7 +41,8 @@ public:
     ~ThemeWidget();
 
 private Q_SLOTS:
-    void updateUI();
+    void updateUI(int state);
+    void changeChart();
     void printPDF();
 
 private:
@@ -46,6 +51,7 @@ private:
     QComboBox *createAnimationBox() const;
     QComboBox *createLegendBox() const;
     void connectSignals();
+
 public:
     QChart *createAreaChart() const;
     QChart *createBarChart(int valueCount) const;
@@ -64,6 +70,8 @@ private:
     QComboBox *m_themeComboBox;
     QCheckBox *m_antialiasCheckBox;
     QPushButton *m_printButton;
+    QGridLayout *m_baseLayout;
+    QGraphicsColorizeEffect *qgce;
 };
 
 #endif // THEMEWIDGET_H

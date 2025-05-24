@@ -36,5 +36,6 @@ public:
 private:
     Ui::MainWindow *ui;
     ThemeWidget *themeWidget;
+
 };
 #endif // MAINWINDOW_H
