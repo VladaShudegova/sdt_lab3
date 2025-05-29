@@ -63,18 +63,18 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
 
     chartView = new QChartView(createBarChart(m_valueCount));
     m_baseLayout->addWidget(chartView, 1, 0);
-    m_chart = chartView;
+    m_chartView = chartView;
 
     setLayout(m_baseLayout);
 
     m_colorThemeCheckBox->setChecked(false);
 
-    m_chart->chart()->setTheme(QChart::ChartThemeLight);
+    m_chartView->chart()->setTheme(QChart::ChartThemeLight);
 
     qgce = new QGraphicsColorizeEffect(this);
     qgce->setColor(Qt::black);
     qgce->setEnabled(false);
-    m_chart->chart()->setGraphicsEffect(qgce);
+    m_chartView->chart()->setGraphicsEffect(qgce);
 
     //updateUI(0);
 }
@@ -203,8 +203,8 @@ void ThemeWidget::switchChart(){
     }
 
     m_baseLayout->addWidget(chartView, 1, 0);
-    m_chart = chartView;
-    m_chart->chart()->setGraphicsEffect(qgce);
+    m_chartView = chartView;
+    m_chartView->chart()->setGraphicsEffect(qgce);
 }
 
 void ThemeWidget::switchColorTheme(int state)
@@ -216,6 +216,21 @@ void ThemeWidget::switchColorTheme(int state)
 
 void ThemeWidget::printPDF(){
     qDebug() << "PDF готов!";
+    QString strFilter = "*.pdf";
+    QString str = QFileDialog::getSaveFileName(this, "Сохранить файл", "D:/repoVlada/old/sdt_lab3/files/chartPDF.pdf", "*.pdf", &strFilter);
+    if(!str.isEmpty()){
+        if(strFilter.contains("pdf")){
+            str = str + ".pdf";
+        }
+        QPdfWriter writer(str);
+        writer.setCreator("author");
+        writer.setPageSize(QPagedPaintDevice::A4);
+        QPainter painter(&writer);
+        m_chartView->render(&painter);
+        painter.end();
+    }
+
+
 }
 
 

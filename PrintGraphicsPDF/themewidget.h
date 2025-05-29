@@ -6,6 +6,9 @@
 #include <QGraphicsColorizeEffect>
 #include <QColorDialog>
 #include <QColor>
+#include <QPainter>
+#include <QPdfWriter>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
     class QComboBox;
@@ -61,7 +64,7 @@ private:
     int m_valueMax;
     int m_valueCount;
 
-    QChartView* m_chart;
+    QChartView* m_chartView;
     DataTable m_dataTable;
     QComboBox *m_chartComboBox;
     QCheckBox *m_colorThemeCheckBox;
