@@ -42,8 +42,8 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     m_valueMax(10),
     m_valueCount(7),
     m_dataTable(generateRandomData(m_listCount, m_valueMax, m_valueCount)),
-    m_themeComboBox(createThemeBox()),
-    m_antialiasCheckBox(new QCheckBox("Черно-белый график")),
+    m_chartComboBox(createChartComboBox()),
+    m_colorThemeCheckBox(new QCheckBox("Черно-белый график")),
     m_printButton(new QPushButton("Печать графика", this))
 {
     connectSignals();
@@ -51,8 +51,8 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     m_baseLayout = new QGridLayout();
     QHBoxLayout *settingsLayout = new QHBoxLayout();
     settingsLayout->addWidget(new QLabel("Выберите тип диаграммы:"));
-    settingsLayout->addWidget(m_themeComboBox);
-    settingsLayout->addWidget(m_antialiasCheckBox);
+    settingsLayout->addWidget(m_chartComboBox);
+    settingsLayout->addWidget(m_colorThemeCheckBox);
     settingsLayout->addWidget(m_printButton);
     settingsLayout->addStretch();
     m_baseLayout->addLayout(settingsLayout, 0, 0);
@@ -67,7 +67,7 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
 
     setLayout(m_baseLayout);
 
-    m_antialiasCheckBox->setChecked(false);
+    m_colorThemeCheckBox->setChecked(false);
 
     m_chart->chart()->setTheme(QChart::ChartThemeLight);
 
@@ -85,10 +85,10 @@ ThemeWidget::~ThemeWidget()
 
 void ThemeWidget::connectSignals()
 {
-    connect(m_themeComboBox,
+    connect(m_chartComboBox,
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-            this, &ThemeWidget::changeChart);
-    connect(m_antialiasCheckBox, &QCheckBox::stateChanged, this, &ThemeWidget::updateUI);
+            this, &ThemeWidget::switchChart);
+    connect(m_colorThemeCheckBox, &QCheckBox::stateChanged, this, &ThemeWidget::switchColorTheme);
     connect(m_printButton, &QPushButton::clicked, this,  &ThemeWidget::printPDF);
 }
 
@@ -118,7 +118,7 @@ DataTable ThemeWidget::generateRandomData(int listCount, int valueMax, int value
     return dataTable;
 }
 
-QComboBox *ThemeWidget::createThemeBox() const
+QComboBox *ThemeWidget::createChartComboBox() const
 {
     // settings layout
     QComboBox *themeComboBox = new QComboBox();
@@ -128,62 +128,6 @@ QComboBox *ThemeWidget::createThemeBox() const
     return themeComboBox;
 }
 
-void ThemeWidget::printPDF(){
-    qDebug() << "PDF готов!";
-}
-
-QComboBox *ThemeWidget::createAnimationBox() const
-{
-    // settings layout
-    QComboBox *animationComboBox = new QComboBox();
-    animationComboBox->addItem("No Animations", QChart::NoAnimation);
-    animationComboBox->addItem("GridAxis Animations", QChart::GridAxisAnimations);
-    animationComboBox->addItem("Series Animations", QChart::SeriesAnimations);
-    animationComboBox->addItem("All Animations", QChart::AllAnimations);
-    return animationComboBox;
-}
-
-QComboBox *ThemeWidget::createLegendBox() const
-{
-    QComboBox *legendComboBox = new QComboBox();
-    legendComboBox->addItem("No Legend ", 0);
-    legendComboBox->addItem("Legend Top", Qt::AlignTop);
-    legendComboBox->addItem("Legend Bottom", Qt::AlignBottom);
-    legendComboBox->addItem("Legend Left", Qt::AlignLeft);
-    legendComboBox->addItem("Legend Right", Qt::AlignRight);
-    return legendComboBox;
-}
-
-QChart *ThemeWidget::createAreaChart() const
-{
-    QChart *chart = new QChart();
-    chart->setTitle("Area chart");
-
-    // The lower series initialized to zero values
-    QLineSeries *lowerSeries = nullptr;
-    QString name("Series ");
-    int nameIndex = 0;
-    for (int i(0); i < m_dataTable.count(); i++) {
-        QLineSeries *upperSeries = new QLineSeries(chart);
-        for (int j(0); j < m_dataTable[i].count(); j++) {
-            Data data = m_dataTable[i].at(j);
-            if (lowerSeries) {
-                const QVector<QPointF>& points = lowerSeries->pointsVector();
-                upperSeries->append(QPointF(j, points[i].y() + data.first.y()));
-            } else {
-                upperSeries->append(QPointF(j, data.first.y()));
-            }
-        }
-        QAreaSeries *area = new QAreaSeries(upperSeries, lowerSeries);
-        area->setName(name + QString::number(nameIndex));
-        nameIndex++;
-        chart->addSeries(area);
-        chart->createDefaultAxes();
-        lowerSeries = upperSeries;
-    }
-
-    return chart;
-}
 
 QChart *ThemeWidget::createBarChart(int valueCount) const
 {
@@ -199,26 +143,6 @@ QChart *ThemeWidget::createBarChart(int valueCount) const
         series->append(set);
     }
     chart->addSeries(series);
-    chart->createDefaultAxes();
-
-    return chart;
-}
-
-QChart *ThemeWidget::createLineChart() const
-{
-    QChart *chart = new QChart();
-    chart->setTitle("Line chart");
-
-    QString name("Series ");
-    int nameIndex = 0;
-    for (const DataList &list : m_dataTable) {
-        QLineSeries *series = new QLineSeries(chart);
-        for (const Data &data : list)
-            series->append(data.first);
-        series->setName(name + QString::number(nameIndex));
-        nameIndex++;
-        chart->addSeries(series);
-    }
     chart->createDefaultAxes();
 
     return chart;
@@ -249,45 +173,13 @@ QChart *ThemeWidget::createPieChart() const
     return chart;
 }
 
-QChart *ThemeWidget::createSplineChart() const
-{
-    // spine chart
-    QChart *chart = new QChart();
-    chart->setTitle("Spline chart");
-    QString name("Series ");
-    int nameIndex = 0;
-    for (const DataList &list : m_dataTable) {
-        QSplineSeries *series = new QSplineSeries(chart);
-        for (const Data &data : list)
-            series->append(data.first);
-        series->setName(name + QString::number(nameIndex));
-        nameIndex++;
-        chart->addSeries(series);
-    }
-    chart->createDefaultAxes();
-    return chart;
+
+void ThemeWidget::deleteChart(QChartView *oldChartView){
+    m_baseLayout->removeWidget(oldChartView);
+    oldChartView->deleteLater();
 }
 
-QChart *ThemeWidget::createScatterChart() const
-{
-    // scatter chart
-    QChart *chart = new QChart();
-    chart->setTitle("Scatter chart");
-    QString name("Series ");
-    int nameIndex = 0;
-    for (const DataList &list : m_dataTable) {
-        QScatterSeries *series = new QScatterSeries(chart);
-        for (const Data &data : list)
-            series->append(data.first);
-        series->setName(name + QString::number(nameIndex));
-        nameIndex++;
-        chart->addSeries(series);
-    }
-    chart->createDefaultAxes();
-    return chart;
-}
-
-void ThemeWidget::changeChart(){
+void ThemeWidget::switchChart(){
     QLayoutItem *item = m_baseLayout->itemAtPosition(1, 0);
     if (!item) return; // на всякий случай, если вдруг нет виджета
 
@@ -295,36 +187,36 @@ void ThemeWidget::changeChart(){
     if (!oldChartView) return;
 
     QChart::ChartType typeChart = static_cast<QChart::ChartType>(
-        m_themeComboBox->itemData(m_themeComboBox->currentIndex()).toInt());
+        m_chartComboBox->itemData(m_chartComboBox->currentIndex()).toInt());
 
+    deleteChart(oldChartView);
+
+    QChartView *chartView;
 
     if(typeChart == ChartType::ChartTypeBar){
-        m_baseLayout->removeWidget(oldChartView);
-        oldChartView->deleteLater();
-        QChartView *chartView = new QChartView(createBarChart(m_valueCount));
-        m_baseLayout->addWidget(chartView, 1, 0);
-        m_chart = chartView;
-        m_chart->chart()->setGraphicsEffect(qgce);
+
+        chartView = new QChartView(createBarChart(m_valueCount));
     }
     else if(typeChart == ChartType::ChartTypePie){
-        m_baseLayout->removeWidget(oldChartView);
-        oldChartView->deleteLater();
-        QChartView *chartView = new QChartView(createPieChart());
+        chartView = new QChartView(createPieChart());
         chartView->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-        m_baseLayout->addWidget(chartView, 1, 0);
-        m_chart = chartView;
-        m_chart->chart()->setGraphicsEffect(qgce);
     }
+
+    m_baseLayout->addWidget(chartView, 1, 0);
+    m_chart = chartView;
+    m_chart->chart()->setGraphicsEffect(qgce);
 }
 
-void ThemeWidget::updateUI(int state)
+void ThemeWidget::switchColorTheme(int state)
 {
     if (qgce){
         qgce->setEnabled(Qt::Checked == state);
     }
 }
 
-
+void ThemeWidget::printPDF(){
+    qDebug() << "PDF готов!";
+}
 
 
 
