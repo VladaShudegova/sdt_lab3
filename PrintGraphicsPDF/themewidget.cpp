@@ -22,7 +22,9 @@
 #include <QtCore/QTime>
 #include <QtCharts/QBarCategoryAxis>
 #include <QDebug>
-
+#include <QMenuBar>
+#include <QMenu>
+#include <QAction>
 
 
 
@@ -43,17 +45,17 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     m_valueCount(7),
     m_dataTable(generateRandomData(m_listCount, m_valueMax, m_valueCount)),
     m_chartComboBox(createChartComboBox()),
-    m_colorThemeCheckBox(new QCheckBox("Черно-белый график")),
-    m_printButton(new QPushButton("Печать графика", this))
+    m_colorThemeCheckBox(new QCheckBox("Черно-белый график"))
 {
+
     connectSignals();
-    // create layout
+
+    // // create layout
     m_baseLayout = new QGridLayout();
     QHBoxLayout *settingsLayout = new QHBoxLayout();
     settingsLayout->addWidget(new QLabel("Выберите тип диаграммы:"));
     settingsLayout->addWidget(m_chartComboBox);
     settingsLayout->addWidget(m_colorThemeCheckBox);
-    settingsLayout->addWidget(m_printButton);
     settingsLayout->addStretch();
     m_baseLayout->addLayout(settingsLayout, 0, 0);
 
@@ -64,19 +66,17 @@ ThemeWidget::ThemeWidget(QWidget *parent) :
     chartView = new QChartView(createBarChart(m_valueCount));
     m_baseLayout->addWidget(chartView, 1, 0);
     m_chartView = chartView;
-
+    m_chartView->chart()->setTheme(QChart::ChartThemeBlueCerulean);
     setLayout(m_baseLayout);
 
     m_colorThemeCheckBox->setChecked(false);
-
-    m_chartView->chart()->setTheme(QChart::ChartThemeLight);
 
     qgce = new QGraphicsColorizeEffect(this);
     qgce->setColor(Qt::black);
     qgce->setEnabled(false);
     m_chartView->chart()->setGraphicsEffect(qgce);
 
-    //updateUI(0);
+    // //updateUI(0);
 }
 
 ThemeWidget::~ThemeWidget()
@@ -89,7 +89,7 @@ void ThemeWidget::connectSignals()
             static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this, &ThemeWidget::switchChart);
     connect(m_colorThemeCheckBox, &QCheckBox::stateChanged, this, &ThemeWidget::switchColorTheme);
-    connect(m_printButton, &QPushButton::clicked, this,  &ThemeWidget::printPDF);
+
 }
 
 
@@ -204,6 +204,7 @@ void ThemeWidget::switchChart(){
 
     m_baseLayout->addWidget(chartView, 1, 0);
     m_chartView = chartView;
+    m_chartView->chart()->setTheme(QChart::ChartThemeBlueCerulean);
     m_chartView->chart()->setGraphicsEffect(qgce);
 }
 
@@ -214,24 +215,23 @@ void ThemeWidget::switchColorTheme(int state)
     }
 }
 
-void ThemeWidget::printPDF(){
-    qDebug() << "PDF готов!";
-    QString strFilter = "*.pdf";
-    QString str = QFileDialog::getSaveFileName(this, "Сохранить файл", "D:/repoVlada/old/sdt_lab3/files/chartPDF.pdf", "*.pdf", &strFilter);
-    if(!str.isEmpty()){
-        if(strFilter.contains("pdf")){
-            str = str + ".pdf";
-        }
-        QPdfWriter writer(str);
-        writer.setCreator("author");
-        writer.setPageSize(QPagedPaintDevice::A4);
-        QPainter painter(&writer);
-        m_chartView->render(&painter);
-        painter.end();
-    }
-
-
+QChartView* ThemeWidget::getChartView() const
+{
+    return m_chartView;
 }
 
-
-
+// void MainWindow::printPDF(){
+//     qDebug() << "PDF готов!";
+//     QString strFilter = "*.pdf";
+//     QString str = QFileDialog::getSaveFileName(this, "Сохранить файл", "D:/repoVlada/old/sdt_lab3/files/chartPDF.pdf", "*.pdf", &strFilter);
+//     if(!str.isEmpty()){
+//         if(strFilter.contains("pdf")){
+//             str = str + ".pdf";
+//         }
+//         QPdfWriter writer(str);
+//         writer.setCreator("author");
+//         writer.setPageSize(QPagedPaintDevice::A4);
+//         QPainter painter(&writer);
+//         ThemeWidget::getChartView->render(&painter);
+//         painter.end();
+//     }

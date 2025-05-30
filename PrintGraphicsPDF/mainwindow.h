@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QtCharts/QChartGlobal>
+#include <QDebug>
+#include <QMessageBox>
 #include "themewidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -33,9 +35,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private Q_SLOTS:
+    void printPDF();
+    void loadFile();
+
 private:
     Ui::MainWindow *ui;
     ThemeWidget *themeWidget;
-
+    QAction *m_loadAction;
+    QAction *m_printAction;
+    QAction *m_exitAction;
 };
 #endif // MAINWINDOW_H

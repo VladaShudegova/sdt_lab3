@@ -9,6 +9,7 @@
 #include <QPainter>
 #include <QPdfWriter>
 #include <QFileDialog>
+#include <QMessageBox>
 
 QT_BEGIN_NAMESPACE
     class QComboBox;
@@ -46,7 +47,6 @@ public:
 private Q_SLOTS:
     void switchColorTheme(int state);
     void switchChart();
-    void printPDF();
 
 private:
     DataTable generateRandomData(int listCount, int valueMax, int valueCount) const;
@@ -55,6 +55,7 @@ private:
     void deleteChart(QChartView*);
 
 public:
+    QChartView *getChartView() const;
     QChart *createBarChart(int valueCount) const;
     QChart *createPieChart() const;
 
@@ -68,7 +69,7 @@ private:
     DataTable m_dataTable;
     QComboBox *m_chartComboBox;
     QCheckBox *m_colorThemeCheckBox;
-    QPushButton *m_printButton;
+
     QGridLayout *m_baseLayout;
     QGraphicsColorizeEffect *qgce;
 };
