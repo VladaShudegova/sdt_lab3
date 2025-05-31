@@ -5,6 +5,10 @@
 #include <QtCharts/QChartGlobal>
 #include <QDebug>
 #include <QMessageBox>
+
+#include <QTableView>
+#include <QFileSystemModel>
+
 #include "themewidget.h"
 
 QT_BEGIN_NAMESPACE
@@ -38,6 +42,11 @@ public:
 private Q_SLOTS:
     void printPDF();
     void loadFile();
+    void loadFolder();
+    void on_selectionChangedSlot(const QItemSelection &selected, const QItemSelection &deselected);
+
+private:
+    void createMenu();
 
 private:
     Ui::MainWindow *ui;
@@ -45,5 +54,8 @@ private:
     QAction *m_loadAction;
     QAction *m_printAction;
     QAction *m_exitAction;
+
+    QFileSystemModel *partModel;
+    QTableView *tableView;
 };
 #endif // MAINWINDOW_H

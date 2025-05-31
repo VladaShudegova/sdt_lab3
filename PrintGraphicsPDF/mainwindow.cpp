@@ -39,6 +39,10 @@
 #include <QFileDialog>
 #include <QPrinter>
 #include <QPrintDialog>
+#include <QDirIterator>
+#include <QFileDialog>
+#include <QMessageBox>
+
 
 QT_CHARTS_BEGIN_NAMESPACE
     class QChartView;
@@ -60,34 +64,40 @@ QT_CHARTS_END_NAMESPACE
         this->setStatusBar(new QStatusBar(this));
         this->statusBar()->showMessage("Выберите файл БД");
 
-        // Используем встроенный menuBar
-        QMenu *fileMenu = menuBar()->addMenu("Файл");
+        createMenu();
 
-        m_loadAction = new QAction("Загрузить данные", this);
-        fileMenu->addAction(m_loadAction);
+        QString homePath = QDir::homePath();
 
-        m_printAction = new QAction("Печать", this);
-        fileMenu->addAction(m_printAction);
+        partModel = new QFileSystemModel(this);
+        partModel->setFilter(QDir::NoDotAndDotDot | QDir::Files);
+        partModel->setRootPath(homePath);
 
-        m_exitAction = new QAction("Выход", this);
-        fileMenu->addAction(m_exitAction);
+        tableView = new QTableView;
+        tableView->setModel(partModel);
 
-        // Создаем временную метку
-        QLabel *justTmpLabel = new QLabel(this);
-        justTmpLabel->setText("------В этой части будем отображать файлы с данными для графика----");
-
-        // Создаем сплиттер и добавляем виджеты
         QSplitter *splitter = new QSplitter(this);
-        splitter->addWidget(justTmpLabel);
+        splitter->addWidget(tableView);
         splitter->addWidget(themeWidget);
 
-        // Устанавливаем сплиттер как центральный виджет
+
         setCentralWidget(splitter);
 
-        // Подключаем сигналы
-        connect(m_loadAction, &QAction::triggered, this, &MainWindow::loadFile);
-        connect(m_printAction, &QAction::triggered, this, &MainWindow::printPDF);
-        connect(m_exitAction, &QAction::triggered, this, &QWidget::close);
+        QItemSelectionModel *selectionModel = tableView->selectionModel();
+
+        //Выполняем соединения слота и сигнала который вызывается когда осуществляется выбор элемента в TreeView
+        connect(selectionModel, &QItemSelectionModel::selectionChanged, this, &MainWindow::on_selectionChangedSlot);
+
+        //Пример организации установки курсора в TreeView относительно модельного индекса
+        QItemSelection toggleSelection;
+        //Объявили модельный индекс topLeft
+        QModelIndex topLeft;
+        //Получили индекс из модели
+        topLeft = partModel->index(homePath);
+        toggleSelection.select(topLeft, topLeft);
+        selectionModel->select(toggleSelection, QItemSelectionModel::Toggle);
+
+
+
     }
 
 MainWindow::~MainWindow()
@@ -95,7 +105,22 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::createMenu(){
+    QMenu *fileMenu = menuBar()->addMenu("Файл");
 
+    m_loadAction = new QAction("Загрузить данные", this);
+    fileMenu->addAction(m_loadAction);
+
+    m_printAction = new QAction("Печать", this);
+    fileMenu->addAction(m_printAction);
+
+    m_exitAction = new QAction("Выход", this);
+    fileMenu->addAction(m_exitAction);
+
+    connect(m_loadAction, &QAction::triggered, this, &MainWindow::loadFolder);
+    connect(m_printAction, &QAction::triggered, this, &MainWindow::printPDF);
+    connect(m_exitAction, &QAction::triggered, this, &QWidget::close);
+}
 
 void MainWindow::loadFile()
 {
@@ -114,15 +139,71 @@ void MainWindow::loadFile()
         }
 
         QTextStream in(&file);
-        // Здесь добавьте код для чтения данных из файла и обновления графика
-        // Например:
-        // m_dataTable = readDataFromFile(in);
-        // updateChart();
+        // Здесь будет код для чтения данных из файла и обновления графика
+
 
         file.close();
     }
 }
+// MainWindow.cpp
 
+
+void MainWindow::loadFolder()
+{
+    // 1. Диалог выбора папки
+    const QString dirPath = QFileDialog::getExistingDirectory(
+        this,
+        tr("Открыть папку с файлами"),
+        QString(),                                            // стартовая директория
+        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    if (dirPath.isEmpty())
+        return;                                     // пользователь нажал Отмена
+
+    // 2. Итератор по *.txt внутри папки (и под-папок при желании)
+    QDirIterator it(dirPath,
+                    QStringList() << "",        // фильтр расширений
+                    QDir::Files,
+                    QDirIterator::Subdirectories);   // или  QDirIterator::NoIteratorFlags чтобы без под-папок
+
+    // Соберём статистику, вдруг пригодится
+    int opened  = 0;
+    int failed  = 0;
+
+    // 3. Читаем каждый файл по очереди
+    while (it.hasNext())
+    {
+        const QString filePath = it.next();
+
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            ++failed;
+            QMessageBox::warning(this, tr("Ошибка"),
+                                 tr("Не удалось открыть файл %1:\n%2.")
+                                     .arg(QDir::toNativeSeparators(filePath),
+                                          file.errorString()));
+            continue;
+        }
+
+        ++opened;
+        QTextStream in(&file);
+
+        /* ----------------------------------------------------------------
+         *  Здесь ваш парсинг / обновление графика
+         *  Например:
+         *      QVector<double> dataX, dataY;
+         *      parseFile(in, dataX, dataY);
+         *      plot->addCurve(dataX, dataY);
+         * ----------------------------------------------------------------*/
+    }
+
+    // 4. Итоговое сообщение (по желанию)
+    QMessageBox::information(this, tr("Загрузка завершена"),
+                             tr("Открыто файлов: %1\nНе удалось открыть: %2")
+                                 .arg(opened)
+                                 .arg(failed));
+}
 
 void MainWindow::printPDF() {
     QString strFilter = "*.pdf";
@@ -150,6 +231,36 @@ void MainWindow::printPDF() {
         themeWidget->getChartView()->render(&painter);
     }
     painter.end();
+}
+
+void MainWindow::on_selectionChangedSlot(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    //Q_UNUSED(selected);
+    Q_UNUSED(deselected);
+
+    QModelIndex index = tableView->selectionModel()->currentIndex();
+
+    QModelIndexList indexs =  selected.indexes();
+
+    QString filePath = "";
+
+    // Размещаем информацию в statusbar относительно выделенного модельного индекса
+    /*
+     * Смотрим, сколько индексов было выделено.
+     * В нашем случае выделяем только один, следовательно всегда берем только первый.
+    */
+    if (indexs.count() >= 1) {
+        QModelIndex ix =  indexs.constFirst();
+        filePath = partModel->filePath(ix);
+        this->statusBar()->showMessage("Выбранный путь : " + partModel->filePath(indexs.constFirst()));
+    }
+
+    /*
+     * Получив выбранные данные из левой части filePath(путь к папке/файлу).
+     * Для представления в правой части устанваливаем корневой индекс относительно filePath.
+     * Табличное представление отображает только файлы, находящиеся в filePath(папки не отображает)
+     */
+    // tableView->setRootIndex(partModel->setRootPath(filePath));
 }
 
 
