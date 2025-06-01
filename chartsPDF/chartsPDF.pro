@@ -13,6 +13,7 @@ CONFIG += c++17
 SOURCES += \
     ChartCreators/barchartcreator.cpp \
     ChartCreators/ichartcreator.cpp \
+    ChartCreators/piechartcreator.cpp \
     ChartData/chartdata.cpp \
     DataReaders/idatareader.cpp \
     DataReaders/jsondatareader.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 HEADERS += \
     ChartCreators/barchartcreator.h \
     ChartCreators/ichartcreator.h \
+    ChartCreators/piechartcreator.h \
     ChartData/chartdata.h \
     DataReaders/idatareader.h \
     DataReaders/jsondatareader.h \

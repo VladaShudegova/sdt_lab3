@@ -2,7 +2,7 @@
 
 ChartWidget::ChartWidget(QWidget *parent) : QWidget(parent)
 {
-    chartCreator = new BarChartCreator();
+    chartCreator = new PieChartCreator();
     chartView = new QChartView(this);
     chartView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     chartView->setFixedSize(600, 400);

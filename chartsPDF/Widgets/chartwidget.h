@@ -8,6 +8,7 @@ using QtCharts::QChartView;
 
 #include <ChartCreators/ichartcreator.h>
 #include <ChartCreators/barchartcreator.h>
+#include <ChartCreators/piechartcreator.h>
 
 class ChartWidget : public QWidget
 {
