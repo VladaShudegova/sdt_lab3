@@ -43,7 +43,8 @@ private Q_SLOTS:
     void printPDF();
     void loadFile();
     void loadFolder();
-    void on_selectionChangedSlot(const QItemSelection &selected, const QItemSelection &deselected);
+    void on_selectionChangedSlot(const QItemSelection &selected,
+                                 const QItemSelection &deselected);
 
 private:
     void createMenu();

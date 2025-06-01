@@ -88,6 +88,8 @@ void ThemeWidget::connectSignals()
             this, &ThemeWidget::switchChart);
     connect(m_colorThemeCheckBox, &QCheckBox::stateChanged, this, &ThemeWidget::switchColorTheme);
 
+    //connect(this, &MainWindow::chartChanged, DR, &DR::changeChart);
+
 }
 
 
