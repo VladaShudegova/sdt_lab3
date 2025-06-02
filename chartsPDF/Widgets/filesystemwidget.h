@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QFileDialog>
 #include <QStringList>
+#include <QMessageBox>
 
 #include "DataReaders/idatareader.h"
 #include "DataReaders/datareaderfactory.h"

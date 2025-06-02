@@ -2,6 +2,9 @@
 
 FileSystemWidget::FileSystemWidget(shared_ptr<DataReaderFactory> factory, QWidget *parent, const QStringList &filters) : QWidget(parent)
 {
+    if (!factory) {
+        throw std::invalid_argument("FileSystemWidget Error: DataReaderFactory dependency cannot be null.");
+    }
     m_factory = factory;
 
     QVBoxLayout* rootLayout = new QVBoxLayout(this);
@@ -16,7 +19,9 @@ FileSystemWidget::FileSystemWidget(shared_ptr<DataReaderFactory> factory, QWidge
     tableView->setModel(fileSystemModel);
     tableView->setRootIndex(fileSystemModel->index(QDir::currentPath()));
 
+
     rootLayout->addWidget(tableView);
+
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -37,7 +42,8 @@ void FileSystemWidget::openNewCatalog()
 
     if(dir.isEmpty())
     {
-        //Вызвать предупреждение о пустой папке
+        QMessageBox::information(this, tr("Info"), tr("The selected directory is empty."));
+        return;
     }
 
     fileSystemModel->setRootPath(dir.absolutePath());
@@ -49,6 +55,5 @@ void FileSystemWidget::modelItemSelected(const QModelIndex &current) const
 {
     QFileInfo fileInfo = fileSystemModel->fileInfo(current);
     QString suffix = fileInfo.suffix();
-    qDebug()<<suffix;
     emit fileSelected(m_factory->getReader(suffix)->readData(fileInfo));
 }

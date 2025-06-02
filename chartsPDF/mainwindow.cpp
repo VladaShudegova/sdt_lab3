@@ -5,6 +5,16 @@ MainWindow::MainWindow(IOCContainer &container, QWidget *parent)
 {
     registeringDependencies(container);
 
+    auto dataReaderFactory = container.getObject<DataReaderFactory>();
+    auto chartCreatorsFactory = container.getObject<ChartCreatorsFactory>();
+
+    if (!dataReaderFactory) {
+        throw std::runtime_error("Failed to get DataReaderFactory from container.");
+    }
+    if (!chartCreatorsFactory) {
+        throw std::runtime_error("Failed to get ChartCreatorsFactory from container.");
+    }
+
     QStringList filters = {"*.sqlite", "*.json"};
 
     fileSystemWidget = new FileSystemWidget(container.getObject<DataReaderFactory>(), this, filters);
@@ -21,20 +31,24 @@ MainWindow::MainWindow(IOCContainer &container, QWidget *parent)
     menu->addAction(printChartAction);
     menu->addAction(exitAction);
 
-
-
     /*Создани Chart*/
     chartWidget = new ChartWidget(container.getObject<ChartCreatorsFactory>());
 
     QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
+    if(splitter != nullptr && fileSystemWidget != nullptr && chartWidget != nullptr){
     splitter->addWidget(fileSystemWidget);
     splitter->addWidget(chartWidget);
+    }
 
     QVBoxLayout* mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(splitter);
+    if(mainLayout != nullptr ){
+        mainLayout->addWidget(splitter);
+    }
 
     QWidget* central = new QWidget(this);
+    if(central != nullptr ){
     central->setLayout(mainLayout);
+    }
 
     setCentralWidget(central);
 

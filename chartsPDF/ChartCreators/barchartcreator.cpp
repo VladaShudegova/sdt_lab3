@@ -17,7 +17,7 @@ QChart* BarChartCreator::createChart(shared_ptr<QList<Record>> chartData) const
     std::sort(data->begin(), data->end(), [](const Record&a, const Record& b){ return a.first < b.first;});
 
     QBarSet* barSet = new QBarSet(data->at(0).first.toString("yyyy"));
-    QDateTime nextMonth = data->at(0).first.addMonths(1);
+    //QDateTime nextMonth = data->at(0).first.addMonths(1);
     QStringList months;
 
     for(int i = 0; i < data->size(); i++)
