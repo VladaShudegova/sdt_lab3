@@ -13,7 +13,7 @@ using std::make_shared;
 class IChartCreator
 {
 public:
-    virtual QChart* createChart(const QList<Record>& data) const = 0;
+    virtual QChart* createChart(shared_ptr<QList<Record>> data) const = 0;
 };
 
 #endif // ICHARTCREATOR_H

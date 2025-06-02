@@ -13,7 +13,7 @@ class PieChartCreator : public IChartCreator
 public:
     PieChartCreator();
 
-    QChart* createChart(const QList<Record>& data) const override;
+    QChart* createChart(shared_ptr<QList<Record>> data) const override;
 };
 
 #endif // PIECHARTCREATOR_H

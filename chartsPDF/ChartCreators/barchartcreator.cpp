@@ -8,22 +8,22 @@ struct MonthAverageValue
     int count = 0;
 };
 
-QChart* BarChartCreator::createChart(const QList<Record>& chartData) const
+QChart* BarChartCreator::createChart(shared_ptr<QList<Record>> chartData) const
 {
-    QList<Record> data = chartData;
+    shared_ptr<QList<Record>> data = make_shared<QList<Record>>(*chartData);
 
     QMap<QString, MonthAverageValue> monthlyData;
 
-    std::sort(data.begin(), data.end(), [](const Record&a, const Record& b){ return a.first < b.first;});
+    std::sort(data->begin(), data->end(), [](const Record&a, const Record& b){ return a.first < b.first;});
 
-    QBarSet* barSet = new QBarSet(data[0].first.toString("yyyy"));
-    QDateTime nextMonth = data[0].first.addMonths(1);
+    QBarSet* barSet = new QBarSet(data->at(0).first.toString("yyyy"));
+    QDateTime nextMonth = data->at(0).first.addMonths(1);
     QStringList months;
 
-    for(int i = 0; i < data.size(); i++)
+    for(int i = 0; i < data->size(); i++)
     {
-        QString date = data[i].first.toString("MM-yyyy");
-        monthlyData[date].sum += data[i].second;
+        QString date = data->at(i).first.toString("MM-yyyy");
+        monthlyData[date].sum += data->at(i).second;
         monthlyData[date].count += 1;
     }
 

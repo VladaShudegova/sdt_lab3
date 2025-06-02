@@ -20,7 +20,7 @@ class BarChartCreator : public IChartCreator
 public:
     BarChartCreator();
 
-    QChart* createChart(const QList<Record>& data) const override;
+    QChart* createChart(shared_ptr<QList<Record>> data) const override;
 };
 
 #endif // BARCHARTCREATOR_H

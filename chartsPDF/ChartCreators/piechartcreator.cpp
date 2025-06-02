@@ -12,23 +12,23 @@ struct MonthAverageValue
 
 
 
-QChart* PieChartCreator::createChart(const QList<Record>& chartData) const
+QChart* PieChartCreator::createChart(shared_ptr<QList<Record>> chartData) const
 {
-    if (chartData.isEmpty())
+    if (chartData->isEmpty())
         return nullptr;
 
 
-    QList<Record> data = chartData;
-    std::sort(data.begin(), data.end(),
+    shared_ptr<QList<Record>> data = make_shared<QList<Record>>(*chartData);
+    std::sort(data->begin(), data->end(),
               [](const Record &a, const Record &b) { return a.first < b.first; });
 
 
     QMap<QString, MonthAverageValue> monthlyData;
 
-    for (const Record &rec : std::as_const(data))
+    for (int i = 0; i < data->size(); i++)
     {
-        const QString monthKey = rec.first.toString("MM-yyyy");
-        monthlyData[monthKey].sum   += rec.second;
+        QString monthKey = data->at(i).first.toString("MM-yyyy");
+        monthlyData[monthKey].sum   += data->at(i).second;
         monthlyData[monthKey].count += 1;
     }
 

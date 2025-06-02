@@ -9,27 +9,27 @@
 #include <QStringList>
 #include <QSplitter>
 
+#include "IOC/iocconteiner.h"
 #include "Widgets/filesystemwidget.h"
 #include "Widgets/chartwidget.h"
 #include "DataReaders/idatareader.h"
 #include "DataReaders/jsondatareader.h"
+#include "ChartCreatorsFactory/chartcreatorsfactory.h"
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(IOCContainer& container, QWidget *parent = nullptr);
     ~MainWindow();
 
-public slots:
-    void onFileSelected(const QFileInfo& fileInfo) const;
-
 signals:
-    void onFileRead(const QList<Record>& data) const;
+    void onFileRead(shared_ptr<QList<Record>> data) const;
 
 private:
     void makeConnection() const;
+    void registeringDependencies(IOCContainer& container);
 
 private:
     FileSystemWidget* fileSystemWidget;

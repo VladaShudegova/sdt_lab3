@@ -13,7 +13,7 @@
 class JSONDataReader : public IDataReader
 {
 public:
-    virtual QList<Record> readData(const QFileInfo& fileInfo) const override;
+    virtual shared_ptr<QList<Record>> readData(const QFileInfo& fileInfo) const override;
 };
 
 #endif // JSONDATAREADER_H

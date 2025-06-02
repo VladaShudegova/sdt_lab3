@@ -3,26 +3,39 @@
 
 #include <QWidget>
 #include <QChartView>
+#include <QComboBox>
+#include <QCheckBox>
+#include <QLabel>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGraphicsColorizeEffect>
+
 
 using QtCharts::QChartView;
 
 #include <ChartCreators/ichartcreator.h>
 #include <ChartCreators/barchartcreator.h>
 #include <ChartCreators/piechartcreator.h>
+#include <ChartCreatorsFactory/chartcreatorsfactory.h>
 
 class ChartWidget : public QWidget
 {
     Q_OBJECT
 public:
-    ChartWidget(QWidget *parent = nullptr);
+    ChartWidget(shared_ptr<ChartCreatorsFactory> factory, QWidget *parent = nullptr);
 
 public slots:
-    void drawChart(const QList<Record>& data);
+    void drawChart(shared_ptr<QList<Record>> data);
+    void changeChartType(int type);
+    void switchColorTheme(int state);
 
 private:
-    IChartCreator* chartCreator;
+    shared_ptr<ChartCreatorsFactory> m_factory;
+    shared_ptr<IChartCreator> chartCreator;
     QChartView* chartView;
-
+    ChartType m_currentType;
+    shared_ptr<QList<Record>> m_data;
+    QGraphicsColorizeEffect *qgce;
 };
 
 #endif // CHARTWIDGET_H

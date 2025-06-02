@@ -1,7 +1,8 @@
 #include "filesystemwidget.h"
 
-FileSystemWidget::FileSystemWidget(QWidget *parent, const QStringList& filters) : QWidget(parent)
+FileSystemWidget::FileSystemWidget(shared_ptr<DataReaderFactory> factory, QWidget *parent, const QStringList &filters) : QWidget(parent)
 {
+    m_factory = factory;
 
     QVBoxLayout* rootLayout = new QVBoxLayout(this);
 
@@ -46,5 +47,8 @@ void FileSystemWidget::openNewCatalog()
 
 void FileSystemWidget::modelItemSelected(const QModelIndex &current) const
 {
-    emit fileSelected(fileSystemModel->fileInfo(current));
+    QFileInfo fileInfo = fileSystemModel->fileInfo(current);
+    QString suffix = fileInfo.suffix();
+    qDebug()<<suffix;
+    emit fileSelected(m_factory->getReader(suffix)->readData(fileInfo));
 }

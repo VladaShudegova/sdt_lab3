@@ -1,8 +1,9 @@
 #include "jsondatareader.h"
 
-QList<Record> JSONDataReader::readData(const QFileInfo &fileInfo) const
+shared_ptr<QList<Record>> JSONDataReader::readData(const QFileInfo &fileInfo) const
 {
-    QList<Record> data;
+    shared_ptr<QList<Record>> data = make_shared<QList<Record>>();
+
     QFile file(fileInfo.absoluteFilePath());
 
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -38,11 +39,7 @@ QList<Record> JSONDataReader::readData(const QFileInfo &fileInfo) const
         qreal pairValue = pair.value(keys[1]).toDouble();
         QDateTime date = QDateTime::fromString(dateString, Qt::ISODate);
 
-        data.append(qMakePair(date, pairValue));
-    }
-
-    for (const auto& pair : data) {
-        qDebug() << pair.first.toString(Qt::ISODate) << "->" << pair.second;
+        data->append(qMakePair(date, pairValue));
     }
 
     return data;

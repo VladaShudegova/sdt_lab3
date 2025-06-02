@@ -14,9 +14,15 @@ SOURCES += \
     ChartCreators/barchartcreator.cpp \
     ChartCreators/ichartcreator.cpp \
     ChartCreators/piechartcreator.cpp \
+    ChartCreatorsFactory/chartcreatorsfactory.cpp \
     ChartData/chartdata.cpp \
+    DataReaders/datareaderfactory.cpp \
     DataReaders/idatareader.cpp \
     DataReaders/jsondatareader.cpp \
+    DataReaders/sqllitedatareader.cpp \
+    IOC/cfactory.cpp \
+    IOC/factoryroot.cpp \
+    IOC/iocconteiner.cpp \
     Widgets/chartwidget.cpp \
     Widgets/filesystemwidget.cpp \
     main.cpp \
@@ -26,9 +32,16 @@ HEADERS += \
     ChartCreators/barchartcreator.h \
     ChartCreators/ichartcreator.h \
     ChartCreators/piechartcreator.h \
+    ChartCreatorsFactory/chartcreatorsfactory.h \
     ChartData/chartdata.h \
+    ChartData/charttype.h \
+    DataReaders/datareaderfactory.h \
     DataReaders/idatareader.h \
     DataReaders/jsondatareader.h \
+    DataReaders/sqllitedatareader.h \
+    IOC/cfactory.h \
+    IOC/factoryroot.h \
+    IOC/iocconteiner.h \
     Widgets/chartwidget.h \
     Widgets/filesystemwidget.h \
     mainwindow.h

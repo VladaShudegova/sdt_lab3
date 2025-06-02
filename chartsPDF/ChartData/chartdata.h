@@ -14,7 +14,6 @@ public:
     ChartData();
 
 private:
-    QList<Record>* data;
 };
 
 #endif // CHARTDATA_H

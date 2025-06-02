@@ -1,12 +1,13 @@
 #include "mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(IOCContainer &container, QWidget *parent)
     : QMainWindow(parent)
 {
+    registeringDependencies(container);
 
-    QStringList filters = {/*"*.sqlite", */"*.json"};
+    QStringList filters = {"*.sqlite", "*.json"};
 
-    fileSystemWidget = new FileSystemWidget(this, filters);
+    fileSystemWidget = new FileSystemWidget(container.getObject<DataReaderFactory>(), this, filters);
     //setCentralWidget(fileSystemWidget);
 
     /*Создание Actions*/
@@ -21,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
     menu->addAction(exitAction);
 
     /*Создани Chart*/
-    chartWidget = new ChartWidget();
+    chartWidget = new ChartWidget(container.getObject<ChartCreatorsFactory>());
 
     QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
     splitter->addWidget(fileSystemWidget);
@@ -35,20 +36,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     setCentralWidget(central);
 
-    /*Создание IDataReader*/
-    dataReader = new JSONDataReader();
-
     makeConnection();
 
 }
 
 MainWindow::~MainWindow() {}
-
-void MainWindow::onFileSelected(const QFileInfo &fileInfo) const
-{
-    QList<Record> data = dataReader->readData(fileInfo);
-    emit onFileRead(data);
-}
 
 void MainWindow::makeConnection() const
 {
@@ -57,6 +49,11 @@ void MainWindow::makeConnection() const
     connect(exitAction, &QAction::triggered, this, &QWidget::close);
 
     /*Подключение считывания данных и отрисовку графиков*/
-    connect(fileSystemWidget, &FileSystemWidget::fileSelected, this, &MainWindow::onFileSelected);
-    connect(this, &MainWindow::onFileRead, chartWidget, &ChartWidget::drawChart);
+    connect(fileSystemWidget, &FileSystemWidget::fileSelected, chartWidget, &ChartWidget::drawChart);
+}
+
+void MainWindow::registeringDependencies(IOCContainer& container)
+{
+    container.registerInstance<ChartCreatorsFactory, ChartCreatorsFactory>();
+    container.registerInstance<DataReaderFactory, DataReaderFactory>();
 }

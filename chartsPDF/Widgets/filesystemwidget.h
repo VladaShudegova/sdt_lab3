@@ -8,22 +8,26 @@
 #include <QFileDialog>
 #include <QStringList>
 
+#include "DataReaders/idatareader.h"
+#include "DataReaders/datareaderfactory.h"
+
 class FileSystemWidget : public QWidget
 {
     Q_OBJECT
 public:
-    FileSystemWidget(QWidget *parent = nullptr, const QStringList& filters = {});
+    FileSystemWidget(shared_ptr<DataReaderFactory> factory, QWidget *parent = nullptr, const QStringList& filters = {});
 
 public slots:
     void openNewCatalog();
     void modelItemSelected(const QModelIndex& current) const;
 
 signals:
-    void fileSelected(const QFileInfo& fileInfo) const;
+    void fileSelected(shared_ptr<QList<Record>> data) const;
 
 private:
     QFileSystemModel* fileSystemModel;
     QTableView* tableView;
+    shared_ptr<DataReaderFactory> m_factory;
 };
 
 #endif // FILESYSTEMWIDGET_H
