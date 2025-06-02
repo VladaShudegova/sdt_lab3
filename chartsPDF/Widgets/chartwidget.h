@@ -9,7 +9,9 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGraphicsColorizeEffect>
-
+#include <QFileDialog>
+#include <QPdfWriter>
+#include <QPainter>
 
 using QtCharts::QChartView;
 
@@ -28,6 +30,7 @@ public slots:
     void drawChart(shared_ptr<QList<Record>> data);
     void changeChartType(int type);
     void switchColorTheme(int state);
+    void printPDF();
 
 private:
     shared_ptr<ChartCreatorsFactory> m_factory;

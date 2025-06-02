@@ -21,6 +21,8 @@ MainWindow::MainWindow(IOCContainer &container, QWidget *parent)
     menu->addAction(printChartAction);
     menu->addAction(exitAction);
 
+
+
     /*Создани Chart*/
     chartWidget = new ChartWidget(container.getObject<ChartCreatorsFactory>());
 
@@ -47,6 +49,7 @@ void MainWindow::makeConnection() const
     /*Подключение Actions*/
     connect(openCatalogAction, &QAction::triggered, fileSystemWidget, &FileSystemWidget::openNewCatalog);
     connect(exitAction, &QAction::triggered, this, &QWidget::close);
+    connect(printChartAction,  &QAction::triggered, chartWidget, &ChartWidget::printPDF);
 
     /*Подключение считывания данных и отрисовку графиков*/
     connect(fileSystemWidget, &FileSystemWidget::fileSelected, chartWidget, &ChartWidget::drawChart);

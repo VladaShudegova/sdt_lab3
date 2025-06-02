@@ -85,3 +85,32 @@ void ChartWidget::switchColorTheme(int state)
         chartView->setChart(chart);
     }
 }
+
+void ChartWidget::printPDF() {
+    QString strFilter = "*.pdf";
+    QString fileName = QFileDialog::getSaveFileName(
+        this,
+        "Сохранить файл",
+        "D:/repoVlada/old/sdt_lab3/files/chartPDF.pdf",
+        strFilter
+        );
+
+    if (fileName.isEmpty()) return;
+
+    if (!fileName.endsWith(".pdf", Qt::CaseInsensitive)) {
+        fileName += ".pdf";
+    }
+
+
+    QPdfWriter writer(fileName);
+    writer.setCreator("PrintChartsPDF");
+    writer.setPageSize(QPagedPaintDevice::A4);
+    writer.setResolution(300);
+
+    QPainter painter(&writer);
+    if (chartView) {
+        chartView->render(&painter);
+    }
+    painter.end();
+}
+
