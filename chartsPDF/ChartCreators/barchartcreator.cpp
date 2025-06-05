@@ -10,6 +10,10 @@ struct MonthAverageValue
 
 QChart* BarChartCreator::createChart(shared_ptr<QList<Record>> chartData) const
 {
+    if(chartData->empty())
+        return nullptr;
+
+
     shared_ptr<QList<Record>> data = make_shared<QList<Record>>(*chartData);
 
     QMap<QString, MonthAverageValue> monthlyData;

@@ -6,6 +6,7 @@
 #include <QBarSeries>
 #include <QBarCategoryAxis>
 #include <QValueAxis>
+#include <QDebug>
 
 using QtCharts::QBarSet;
 using QtCharts::QBarSeries;

@@ -14,8 +14,7 @@ shared_ptr<QList<Record>> SQLLiteDataReader::readData(const QFileInfo &fileInfo)
 
     QStringList tables = dbase.tables();
     if(tables.isEmpty()) {
-        qWarning() << "Warning: no tables in sqlite dbase";
-        return make_shared<QList<Record>>();
+        throw QString ("Warning: no tables in sqlite dbase");
     }
     QString tableName = tables.first();
 
@@ -32,13 +31,14 @@ shared_ptr<QList<Record>> SQLLiteDataReader::readData(const QFileInfo &fileInfo)
 
     while(queryAllRecords.next())
     {
-        //qDebug()<<queryAllRecords.value(col1).toString();
         QDateTime dataTime = QDateTime::fromString(queryAllRecords.value(col1).toString(), "dd.MM.yyyy HH:mm");
-        data->append(qMakePair(dataTime, queryAllRecords.value(col2).toReal()));
+        qreal value = queryAllRecords.value(col2).toReal();
+        if(!dataTime.isValid() || !value){
+            throw QString("Not valid date");
+        }
 
+        data->append(qMakePair(dataTime, value);
     }
-
-    qDebug()<<data->at(0);
 
     return data;
 }

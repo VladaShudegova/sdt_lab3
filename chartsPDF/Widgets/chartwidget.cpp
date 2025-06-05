@@ -51,8 +51,10 @@ void ChartWidget::drawChart(shared_ptr<QList<Record>> data)
     shared_ptr<IChartCreator> creator = m_factory->getCreator(m_currentType);
     m_data = data;
     QChart* chart = creator->createChart(data);
-    chartView->setChart(chart);
-
+    if(chart)
+    {
+        chartView->setChart(chart);
+    }
 }
 
 void ChartWidget::changeChartType(int type)
@@ -66,7 +68,10 @@ void ChartWidget::changeChartType(int type)
     if(!m_data)
         return;
     QChart* chart = creator->createChart(m_data);
-    chartView->setChart(chart);
+    if(chart)
+    {
+        chartView->setChart(chart);
+    }
 
 }
 

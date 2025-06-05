@@ -3,7 +3,7 @@
 
 #include <QFileInfo>
 #include <memory>
-
+#include <QMessageBox>
 using std::shared_ptr;
 using std::make_shared;
 

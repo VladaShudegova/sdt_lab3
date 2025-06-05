@@ -36,11 +36,15 @@ void FileSystemWidget::openNewCatalog()
                                                     QFileDialog::ShowDirsOnly);
 
     if(directory.isEmpty())
+    {
+        QMessageBox::warning(nullptr, "Warning", "Catalog not selected!");
         return;
+    }
 
     QDir dir(directory);
+    QStringList files = dir.entryList(fileSystemModel->nameFilters(),QDir::Files);
 
-    if(dir.isEmpty())
+    if(files.isEmpty())
     {
         QMessageBox::information(this, tr("Info"), tr("The selected directory is empty."));
         return;
@@ -55,5 +59,15 @@ void FileSystemWidget::modelItemSelected(const QModelIndex &current) const
 {
     QFileInfo fileInfo = fileSystemModel->fileInfo(current);
     QString suffix = fileInfo.suffix();
-    emit fileSelected(m_factory->getReader(suffix)->readData(fileInfo));
+
+    try
+    {
+        shared_ptr<QList<Record>> data = m_factory->getReader(suffix)->readData(fileInfo);
+        emit fileSelected(data);
+    }
+    catch(const QString e)
+    {
+        QMessageBox::critical(nullptr, "Warning", e);
+    }
+
 }

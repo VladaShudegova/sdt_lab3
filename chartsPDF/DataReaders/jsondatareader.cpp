@@ -19,7 +19,7 @@ shared_ptr<QList<Record>> JSONDataReader::readData(const QFileInfo &fileInfo) co
 
     if(parseError.error != QJsonParseError::NoError)
     {
-        //throw QString("JSON parse error:" << parseError.errorString());
+        throw QString("JSON parse error:" + parseError.errorString());
     }
 
     QJsonArray jsonArray = jsonDocument.array();
@@ -36,8 +36,13 @@ shared_ptr<QList<Record>> JSONDataReader::readData(const QFileInfo &fileInfo) co
         QJsonObject pair = value.toObject();
 
         QString dateString = pair.value(keys[0]).toString();
+
         qreal pairValue = pair.value(keys[1]).toDouble();
         QDateTime date = QDateTime::fromString(dateString, Qt::ISODate);
+
+        if(!date.isValid() || !pairValue){
+            throw QString("Not valid data");
+        }
 
         data->append(qMakePair(date, pairValue));
     }
