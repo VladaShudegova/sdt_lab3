@@ -35,8 +35,6 @@ private:
     FileSystemWidget* fileSystemWidget;
     ChartWidget* chartWidget;
 
-    IDataReader* dataReader;
-
     QMenu* menu;
     QAction* openCatalogAction;
     QAction* printChartAction;

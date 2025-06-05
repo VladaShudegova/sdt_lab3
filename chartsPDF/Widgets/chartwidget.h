@@ -26,19 +26,18 @@ class ChartWidget : public QWidget
 public:
     ChartWidget(shared_ptr<ChartCreatorsFactory> factory, QWidget *parent = nullptr);
 
+private:
+    shared_ptr<ChartCreatorsFactory> m_factory;
+    QChartView* chartView;
+    ChartType m_currentType;
+    shared_ptr<QList<Record>> m_data;
+    QGraphicsColorizeEffect *qgce;
+
 public slots:
     void drawChart(shared_ptr<QList<Record>> data);
     void changeChartType(int type);
     void switchColorTheme(int state);
     void printPDF();
-
-private:
-    shared_ptr<ChartCreatorsFactory> m_factory;
-    shared_ptr<IChartCreator> chartCreator;
-    QChartView* chartView;
-    ChartType m_currentType;
-    shared_ptr<QList<Record>> m_data;
-    QGraphicsColorizeEffect *qgce;
 };
 
 #endif // CHARTWIDGET_H

@@ -14,7 +14,7 @@ ChartWidget::ChartWidget(shared_ptr<ChartCreatorsFactory> factory, QWidget *pare
     chartTypeComboBox->addItem("PieChart", static_cast<int>(ChartType::Pie));
     chartTypeComboBox->setCurrentIndex(0);
     m_currentType = static_cast<ChartType>(chartTypeComboBox->currentIndex());
-    chartCreator = m_factory->getCreator(m_currentType);
+    //chartCreator = m_factory->getCreator(m_currentType);
 
     QCheckBox* checkBoxBW = new QCheckBox("Черно-белый график");
     checkBoxBW->setChecked(false);
@@ -48,8 +48,9 @@ void ChartWidget::drawChart(shared_ptr<QList<Record>> data)
     QChart* oldChart = chartView->chart();
     if(!oldChart)
         delete oldChart;
+    shared_ptr<IChartCreator> creator = m_factory->getCreator(m_currentType);
     m_data = data;
-    QChart* chart = chartCreator->createChart(data);
+    QChart* chart = creator->createChart(data);
     chartView->setChart(chart);
 
 }
@@ -61,10 +62,10 @@ void ChartWidget::changeChartType(int type)
         delete oldChart;
 
     m_currentType = static_cast<ChartType>(type);
-    chartCreator = m_factory->getCreator(m_currentType);
+    shared_ptr<IChartCreator> creator = m_factory->getCreator(m_currentType);
     if(!m_data)
         return;
-    QChart* chart = chartCreator->createChart(m_data);
+    QChart* chart = creator->createChart(m_data);
     chartView->setChart(chart);
 
 }
@@ -81,7 +82,8 @@ void ChartWidget::switchColorTheme(int state)
         QChart* oldChart = chartView->chart();
         if(!oldChart)
             delete oldChart;
-        QChart* chart = chartCreator->createChart(m_data);
+        shared_ptr<IChartCreator> creator = m_factory->getCreator(m_currentType);
+        QChart* chart = creator->createChart(m_data);
         chartView->setChart(chart);
     }
 }

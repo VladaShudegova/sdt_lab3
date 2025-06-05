@@ -9,6 +9,7 @@ using std::make_shared;
 
 #include "ChartData/chartdata.h"
 
+
 class IDataReader
 {
 public:
