@@ -33,11 +33,11 @@ shared_ptr<QList<Record>> SQLLiteDataReader::readData(const QFileInfo &fileInfo)
     {
         QDateTime dataTime = QDateTime::fromString(queryAllRecords.value(col1).toString(), "dd.MM.yyyy HH:mm");
         qreal value = queryAllRecords.value(col2).toReal();
-        if(!dataTime.isValid() || !value){
+        if(!dataTime.isValid() ){//|| !value){
             throw QString("Not valid date");
         }
 
-        data->append(qMakePair(dataTime, value);
+        data->append(qMakePair(dataTime, value));
     }
 
     return data;
