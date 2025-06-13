@@ -55,6 +55,9 @@ void ChartWidget::drawChart(shared_ptr<QList<Record>> data)
     {
         chartView->setChart(chart);
     }
+
+
+
 }
 
 void ChartWidget::changeChartType(int type)
@@ -76,19 +79,20 @@ void ChartWidget::changeChartType(int type)
 }
 
 
+
 void ChartWidget::switchColorTheme(int state)
 {
     if (!m_data || !chartView || !chartView->chart())
         return;
 
-    bool enableBlackAndWhite = (Qt::Checked == state);
+    enableBlackAndWhite = (Qt::Checked == state);
 
     QChart* currentChart = chartView->chart();
 
     // Проверка наличия эффекта
     QGraphicsEffect* existingEffect = currentChart->graphicsEffect();
     QGraphicsColorizeEffect* colorEffect = nullptr;
-
+    qgce = colorEffect;
     if (!existingEffect) {
         colorEffect = new QGraphicsColorizeEffect(currentChart);
         colorEffect->setColor(Qt::black); // Черный цвет для ч/б режима

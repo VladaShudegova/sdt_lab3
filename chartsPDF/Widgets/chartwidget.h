@@ -38,6 +38,7 @@ private:
     ChartType m_currentType;
     shared_ptr<QList<Record>> m_data;
     QGraphicsColorizeEffect *qgce;
+    bool enableBlackAndWhite;
 
 public slots:
     void drawChart(shared_ptr<QList<Record>> data);
