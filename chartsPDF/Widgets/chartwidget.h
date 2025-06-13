@@ -20,6 +20,12 @@ using QtCharts::QChartView;
 #include <ChartCreators/piechartcreator.h>
 #include <ChartCreatorsFactory/chartcreatorsfactory.h>
 
+
+#include <QPainter>
+#include <QPdfWriter>
+#include <QtPrintSupport/QPrintDialog>
+#include <QtPrintSupport/QPrinter>
+
 class ChartWidget : public QWidget
 {
     Q_OBJECT
