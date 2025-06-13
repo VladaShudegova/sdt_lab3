@@ -1,15 +1,14 @@
 #include "datareaderfactory.h"
 
-DataReaderFactory::DataReaderFactory() {}
+DataReaderFactory::DataReaderFactory() {
+    registerReader<JSONDataReader>("json");
+    registerReader<SQLLiteDataReader>("sqlite");
+}
 
-shared_ptr<IDataReader> DataReaderFactory::getReader(const QString type) const
-{
-    if(type == "json")
-    {
-        return make_shared<JSONDataReader>();
+std::shared_ptr<IDataReader> DataReaderFactory::getReader(const QString& type) const {
+    auto it = DataReaderFactory::creators.find(type);
+    if (it != DataReaderFactory::creators.end()) {
+        return it->second();
     }
-    else if(type == "sqlite")
-    {
-        return make_shared<SQLLiteDataReader>();
-    }
+    return nullptr;
 }

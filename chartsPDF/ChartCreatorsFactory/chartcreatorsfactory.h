@@ -11,11 +11,30 @@
 using std::shared_ptr;
 using std::make_shared;
 
-class ChartCreatorsFactory
-{
+// class ChartCreatorsFactory
+// {
+// public:
+//     ChartCreatorsFactory();
+//     shared_ptr<IChartCreator> getCreator(const ChartType type);
+// };
+
+
+
+class ChartCreatorsFactory {
+private:
+    using CreatorFunc = std::function<std::shared_ptr<IChartCreator>()>;
+    std::unordered_map<ChartType, CreatorFunc> creators;
+
 public:
+    template<typename T>
+    void registerReader(const ChartType& type) {
+        creators[type] = []() { return std::make_shared<T>(); };
+    }
+
     ChartCreatorsFactory();
-    shared_ptr<IChartCreator> getCreator(const ChartType type);
+
+    std::shared_ptr<IChartCreator> getCreator(const ChartType& type) const;
 };
+
 
 #endif // CHARTCREATORSFACTORY_H

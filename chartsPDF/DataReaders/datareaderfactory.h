@@ -9,11 +9,21 @@
 using std::shared_ptr;
 using std::make_shared;
 
-class DataReaderFactory
-{
+
+class DataReaderFactory {
+private:
+    using CreatorFunc = std::function<std::shared_ptr<IDataReader>()>;
+    std::unordered_map<QString, CreatorFunc> creators;
+
 public:
+    template<typename T>
+    void registerReader(const QString& type) {
+        creators[type] = []() { return std::make_shared<T>(); };
+    }
+
     DataReaderFactory();
-    shared_ptr<IDataReader> getReader(const QString type) const;
+
+    std::shared_ptr<IDataReader> getReader(const QString& type) const;
 };
 
 #endif // DATAREADERFACTORY_H

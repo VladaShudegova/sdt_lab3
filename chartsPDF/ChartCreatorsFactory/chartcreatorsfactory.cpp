@@ -1,16 +1,14 @@
 #include "chartcreatorsfactory.h"
 
-ChartCreatorsFactory::ChartCreatorsFactory() {}
+ChartCreatorsFactory::ChartCreatorsFactory() {
+    registerReader<BarChartCreator>(ChartType::Bar);
+    registerReader<PieChartCreator>(ChartType::Pie);
+}
 
-shared_ptr<IChartCreator> ChartCreatorsFactory::getCreator(const ChartType type)
-{
-    switch (type) {
-    case ChartType::Bar: return make_shared<BarChartCreator>();
-        break;
-    case ChartType::Pie: return make_shared<PieChartCreator>();
-        break;
-    default:
-        return nullptr;
-        break;
+std::shared_ptr<IChartCreator> ChartCreatorsFactory::getCreator(const ChartType& type) const {
+    auto it = ChartCreatorsFactory::creators.find(type);
+    if (it != ChartCreatorsFactory::creators.end()) {
+        return it->second();
     }
+    return nullptr;
 }

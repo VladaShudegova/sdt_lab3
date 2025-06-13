@@ -81,44 +81,13 @@ void ChartWidget::changeChartType(int type)
 
 
 void ChartWidget::switchColorTheme(int state){
+    if (!m_data || !chartView || !chartView->chart())
+         return;
     qgce->setEnabled(Qt::Checked == state);
     chartView->chart()->setGraphicsEffect(qgce);
 }
 
 
-// void ChartWidget::switchColorTheme(int state)
-// {
-//     if (!m_data || !chartView || !chartView->chart())
-//         return;
-
-//     enableBlackAndWhite = (Qt::Checked == state);
-
-//     QChart* currentChart = chartView->chart();
-
-//     // Проверка наличия эффекта
-//     QGraphicsEffect* existingEffect = currentChart->graphicsEffect();
-//     QGraphicsColorizeEffect* colorEffect = nullptr;
-//     qgce = colorEffect;
-//     if (!existingEffect) {
-//         colorEffect = new QGraphicsColorizeEffect(currentChart);
-//         colorEffect->setColor(Qt::black); // Черный цвет для ч/б режима
-//         colorEffect->setStrength(1.0);    // Полная интенсивность эффекта
-//         currentChart->setGraphicsEffect(colorEffect);
-//     } else {
-//         colorEffect = qobject_cast<QGraphicsColorizeEffect*>(existingEffect);
-//         if (!colorEffect) {
-
-//             colorEffect = new QGraphicsColorizeEffect(currentChart);
-//             colorEffect->setColor(Qt::black);
-//             colorEffect->setStrength(1.0);
-//             currentChart->setGraphicsEffect(colorEffect);
-//         }
-//     }
-
-//     colorEffect->setEnabled(enableBlackAndWhite);
-
-//     chartView->update();
-// }
 
 void ChartWidget::printPDF() {
     QString strFilter = "*.pdf";
