@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <iostream>
 
-#include "iocconteiner.h"
+#include "ioc/iocconteiner.h"
 #include "iprocessor.h"
 #include "intelprocessor.h"
 #include "amdprocessor.h"

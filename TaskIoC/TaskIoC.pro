@@ -13,6 +13,9 @@ SOURCES += \
         factoryroot.cpp \
         icomputer.cpp \
         intelprocessor.cpp \
+        ioc/cfactory.cpp \
+        ioc/factoryroot.cpp \
+        ioc/iocconteiner.cpp \
         iocconteiner.cpp \
         iprocessor.cpp \
         main.cpp
@@ -29,5 +32,11 @@ HEADERS += \
     factoryroot.h \
     icomputer.h \
     intelprocessor.h \
+    ioc/cfactory.h \
+    ioc/factoryroot.h \
+    ioc/iocconteiner.h \
     iocconteiner.h \
     iprocessor.h
+
+DISTFILES += \
+    debug/cfactory.o
