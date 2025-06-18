@@ -30,10 +30,10 @@ class ChartWidget : public QWidget
 {
     Q_OBJECT
 public:
-    ChartWidget(shared_ptr<ChartCreatorsFactory> factory, QWidget *parent = nullptr);
+    ChartWidget(shared_ptr<IChartCreatorsFactory> factory, QWidget *parent = nullptr);
 
 private:
-    shared_ptr<ChartCreatorsFactory> m_factory;
+    shared_ptr<IChartCreatorsFactory> m_factory;
     QChartView* chartView;
     ChartType m_currentType;
     shared_ptr<QList<Record>> m_data;

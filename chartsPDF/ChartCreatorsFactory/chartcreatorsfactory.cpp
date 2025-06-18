@@ -1,8 +1,8 @@
 #include "chartcreatorsfactory.h"
 
 ChartCreatorsFactory::ChartCreatorsFactory() {
-    registerReader<BarChartCreator>(ChartType::Bar);
-    registerReader<PieChartCreator>(ChartType::Pie);
+    registerCreator<BarChartCreator>(ChartType::Bar);
+    registerCreator<PieChartCreator>(ChartType::Pie);
 }
 
 std::shared_ptr<IChartCreator> ChartCreatorsFactory::getCreator(const ChartType& type) const {

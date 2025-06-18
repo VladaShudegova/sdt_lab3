@@ -1,6 +1,6 @@
 #include "filesystemwidget.h"
 
-FileSystemWidget::FileSystemWidget(shared_ptr<DataReaderFactory> factory, QWidget *parent, const QStringList &filters) : QWidget(parent)
+FileSystemWidget::FileSystemWidget(shared_ptr<IDataReaderFactory> factory, QWidget *parent, const QStringList &filters) : QWidget(parent)
 {
     if (!factory) {
         throw std::invalid_argument("FileSystemWidget Error: DataReaderFactory dependency cannot be null.");

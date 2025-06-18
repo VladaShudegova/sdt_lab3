@@ -1,6 +1,6 @@
 #include "chartwidget.h"
 
-ChartWidget::ChartWidget(shared_ptr<ChartCreatorsFactory> factory, QWidget *parent) : QWidget(parent)
+ChartWidget::ChartWidget(shared_ptr<IChartCreatorsFactory> factory, QWidget *parent) : QWidget(parent)
 {
     m_factory = factory;
     chartView = new QChartView(this);

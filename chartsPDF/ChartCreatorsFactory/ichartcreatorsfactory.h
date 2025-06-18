@@ -8,10 +8,12 @@
 using std::shared_ptr;
 using std::make_shared;
 
-class IChartCreatorsFactory
-{
+
+class IChartCreatorsFactory {
 public:
-    shared_ptr<IChartCreator> getCreator(int) = 0;
+    virtual ~IChartCreatorsFactory() = default;
+
+    virtual std::shared_ptr<IChartCreator> getCreator(const ChartType& type) const = 0;
 };
 
 #endif // ICHARTCREATORSFACTORY_H

@@ -16,7 +16,7 @@ class FileSystemWidget : public QWidget
 {
     Q_OBJECT
 public:
-    FileSystemWidget(shared_ptr<DataReaderFactory> factory, QWidget *parent = nullptr, const QStringList& filters = {});
+    FileSystemWidget(shared_ptr<IDataReaderFactory> factory, QWidget *parent = nullptr, const QStringList& filters = {});
 
 public slots:
     void openNewCatalog();
@@ -28,7 +28,7 @@ signals:
 private:
     QFileSystemModel* fileSystemModel;
     QTableView* tableView;
-    shared_ptr<DataReaderFactory> m_factory;
+    shared_ptr<IDataReaderFactory> m_factory;
 };
 
 #endif // FILESYSTEMWIDGET_H

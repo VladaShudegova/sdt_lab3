@@ -17,7 +17,6 @@ SOURCES += \
     ChartCreatorsFactory/chartcreatorsfactory.cpp \
     ChartData/chartdata.cpp \
     DataReaders/datareaderfactory.cpp \
-    DataReaders/idatareader.cpp \
     DataReaders/jsondatareader.cpp \
     DataReaders/sqllitedatareader.cpp \
     IOC/cfactory.cpp \
@@ -33,10 +32,12 @@ HEADERS += \
     ChartCreators/ichartcreator.h \
     ChartCreators/piechartcreator.h \
     ChartCreatorsFactory/chartcreatorsfactory.h \
+    ChartCreatorsFactory/ichartcreatorsfactory.h \
     ChartData/chartdata.h \
     ChartData/charttype.h \
     DataReaders/datareaderfactory.h \
     DataReaders/idatareader.h \
+    DataReaders/idatareaderfactory.h \
     DataReaders/jsondatareader.h \
     DataReaders/sqllitedatareader.h \
     IOC/cfactory.h \
