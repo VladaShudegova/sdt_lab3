@@ -8,15 +8,12 @@ CONFIG += c++17 cmdline
 
 SOURCES += \
         amdprocessor.cpp \
-        cfactory.cpp \
         computer.cpp \
-        factoryroot.cpp \
         icomputer.cpp \
         intelprocessor.cpp \
         ioc/cfactory.cpp \
         ioc/factoryroot.cpp \
         ioc/iocconteiner.cpp \
-        iocconteiner.cpp \
         iprocessor.cpp \
         main.cpp
 
@@ -27,15 +24,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     amdprocessor.h \
-    cfactory.h \
     computer.h \
-    factoryroot.h \
     icomputer.h \
     intelprocessor.h \
     ioc/cfactory.h \
     ioc/factoryroot.h \
     ioc/iocconteiner.h \
-    iocconteiner.h \
     iprocessor.h
 
 DISTFILES += \
