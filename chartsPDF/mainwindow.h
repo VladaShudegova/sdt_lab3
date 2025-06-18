@@ -21,7 +21,9 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(IOCContainer& container, QWidget *parent = nullptr);
+    MainWindow(std::shared_ptr<IDataReaderFactory> dataReaderFactory,
+               std::shared_ptr<IChartCreatorsFactory> chartCreatorsFactory,
+               QWidget *parent = nullptr);
     ~MainWindow();
 
 signals:

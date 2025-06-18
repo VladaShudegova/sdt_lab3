@@ -1,24 +1,15 @@
 #include "mainwindow.h"
 
-MainWindow::MainWindow(IOCContainer &container, QWidget *parent)
+MainWindow::MainWindow( std::shared_ptr<IDataReaderFactory> dataReaderFactory,
+                        std::shared_ptr<IChartCreatorsFactory> chartCreatorsFactory,
+                        QWidget *parent)
     : QMainWindow(parent)
 {
-    registeringDependencies(container);
-
-    auto dataReaderFactory = container.getObject<IDataReaderFactory>();
-    auto chartCreatorsFactory = container.getObject<IChartCreatorsFactory>();
-
-    if (!dataReaderFactory) {
-        throw std::runtime_error("Failed to get DataReaderFactory from container.");
-    }
-    if (!chartCreatorsFactory) {
-        throw std::runtime_error("Failed to get ChartCreatorsFactory from container.");
-    }
 
     QStringList filters = {"*.sqlite", "*.json"};
 
-    fileSystemWidget = new FileSystemWidget(container.getObject<IDataReaderFactory>(), this, filters);
-    //setCentralWidget(fileSystemWidget);
+    fileSystemWidget = new FileSystemWidget(dataReaderFactory, this, filters);
+
 
     /*Создание Actions*/
     openCatalogAction = new QAction("Открыть...", this);
@@ -32,7 +23,7 @@ MainWindow::MainWindow(IOCContainer &container, QWidget *parent)
     menu->addAction(exitAction);
 
     /*Создани Chart*/
-    chartWidget = new ChartWidget(container.getObject<IChartCreatorsFactory>());
+    chartWidget = new ChartWidget(chartCreatorsFactory);
 
     QSplitter* splitter = new QSplitter(Qt::Horizontal, this);
     if(splitter != nullptr && fileSystemWidget != nullptr && chartWidget != nullptr){
@@ -69,8 +60,4 @@ void MainWindow::makeConnection() const
     connect(fileSystemWidget, &FileSystemWidget::fileSelected, chartWidget, &ChartWidget::drawChart);
 }
 
-void MainWindow::registeringDependencies(IOCContainer& container)
-{
-    container.registerInstance<IChartCreatorsFactory, ChartCreatorsFactory>();
-    container.registerInstance<IDataReaderFactory, DataReaderFactory>();
-}
+
